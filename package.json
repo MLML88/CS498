@@ -15,10 +15,14 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@material-tailwind/react": "^2.1.10",
     "@tailwindcss/postcss": "^4.1.18",
+    "apexcharts": "^5.6.0",
     "postcss": "^8.5.6",
     "react": "^19.2.3",
+    "react-apexcharts": "^2.0.1",
     "react-dom": "^19.2.3",
+    "react-router-dom": "^7.13.0",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
