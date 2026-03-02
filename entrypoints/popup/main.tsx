@@ -2,13 +2,34 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
+import PieChartWithKey from "./PieChartWithKey";
+
 
 function MainPage() {
   const navigate = useNavigate();
+
   return (
     <>
-      <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
-        <h1 className="text-3xl font-bold underline">Hello World!</h1>
+      {/*<div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">*/}
+      <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
+
+        <div className="pb-2 mb-4 border-b border-black">
+          <h1 className="text-xl font-semibold">WebTrack</h1>
+        </div>
+
+        {/*<h1 className="text-3xl font-bold underline">Hello World!</h1>
+        <p className="text-xl font-semibold">Data Overview</p>*/}
+
+        <div className="flex items-start gap-4">
+          <div className="mt-4 w-[200px] h-[200px]">
+            <PieChartWithKey />
+          </div>
+
+          <div className="w-[260px] bg-gray-200 rounded-x1 shadow p-4">
+            Info goes here
+          </div>
+        </div>
+
         <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-neutral-primary-soft border-t border-default">
         <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
               <button

@@ -1,7 +1,10 @@
 {
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "moduleResolution": "node"
   }
 }
