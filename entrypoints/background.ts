@@ -10,8 +10,7 @@ export default defineBackground(() => {
   function normalizeUrl(url: string): string {
     try {
       const u = new URL(url);
-      u.hash = "";
-      return u.toString();
+      return u.hostname.replace(/^www\./, "");
     } catch {
       return url;
     }

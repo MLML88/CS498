@@ -13,6 +13,7 @@ function MainPage() {
       {/*<div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">*/}
       <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
 
+        {/* Header */}
         <div className="pb-2 mb-4 border-b border-black">
           <h1 className="text-xl font-semibold">WebTrack</h1>
         </div>
@@ -20,16 +21,23 @@ function MainPage() {
         {/*<h1 className="text-3xl font-bold underline">Hello World!</h1>
         <p className="text-xl font-semibold">Data Overview</p>*/}
 
-        <div className="flex items-start gap-4">
-          <div className="mt-4 w-[200px] h-[200px]">
-            <PieChartWithKey />
+          {/* Middle section */}
+        <div className="flex items-start justify-center gap-4">
+          {/* Left Side */}
+          <div className="flex justify-center items-start w-[300px]">
+            <div className="mt-4 w-[300px] h-[300px]">
+              <PieChartWithKey />
+            </div>
           </div>
-
-          <div className="w-[260px] bg-gray-200 rounded-x1 shadow p-4">
-            Info goes here
+          {/* Right Side */}
+          <div className="flex justify-center w-[300px]">
+            <div className="w-[260px] h-[400px] bg-gray-200 rounded-x1 shadow p-4">
+              Info goes here
+            </div>
           </div>
         </div>
 
+          {/* Footer */}
         <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-neutral-primary-soft border-t border-default">
         <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
               <button
