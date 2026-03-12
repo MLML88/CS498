@@ -3,10 +3,28 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
-
+import html2canvas from "html2canvas";
 
 function MainPage() {
   const navigate = useNavigate();
+
+  const CaptureChart = async () => {
+    try {
+      const element = document.getElementById("image-container");
+      if (!element) {
+        navigate("/share");
+        return;
+      }
+      const canvas = await html2canvas(element, { scale: 2 });
+
+      const image = canvas.toDataURL("image/jpeg", 1.0);
+
+      sessionStorage.setItem("chartImage", image);
+  } catch (err) {
+    console.error("Screenshot failed: ", err);
+  }
+    navigate("/share");
+  };
 
   return (
     <>
@@ -22,7 +40,7 @@ function MainPage() {
         <p className="text-xl font-semibold">Data Overview</p>*/}
 
           {/* Middle section */}
-        <div className="flex items-start justify-center gap-4">
+        <div id="image-container" /*style={{ backgroundColor: "white", color: "black" }}*/ className="flex items-start justify-center gap-4">
           {/* Left Side */}
           <div className="flex justify-center items-start w-[300px]">
             <div className="mt-4 w-[300px] h-[300px]">
@@ -31,7 +49,8 @@ function MainPage() {
           </div>
           {/* Right Side */}
           <div className="flex justify-center w-[300px]">
-            <div className="w-[260px] h-[400px] bg-gray-200 rounded-x1 shadow p-4">
+            <div className="w-[260px] h-[400px] rounded-xl shadow p-4"
+            style={{ backgroundColor: "#e9e5e8" }}>
               Info goes here
             </div>
           </div>
@@ -50,7 +69,7 @@ function MainPage() {
               
               <button
                 type="button"
-                onClick={() => navigate("/share")}
+                onClick={CaptureChart}
                 className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
               >
                 Share
@@ -115,14 +134,33 @@ function MainPage() {
 
 function SharePage() {
   const navigate = useNavigate();
+
+  const downloadChart = () => {
+    const image = sessionStorage.getItem("chartImage");
+    if (!image) return;
+
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "webtrack-data.jpeg";
+    link.click();
+  };
+
   return (
     <>
       <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
-        <h1 className="text-3xl font-bold underline">Share this!</h1><button
-        type="button"
-        onClick={() => navigate("/")}
-        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-      >
+        <h1 className="text-3xl font-bold underline">Share this!</h1>
+
+        <button
+          onClick={downloadChart}
+          className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">
+            Download jpeg
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        >
         Back to Main
       </button>
       </div>
