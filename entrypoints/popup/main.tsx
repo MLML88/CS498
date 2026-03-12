@@ -3,10 +3,31 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
+import { getTimeForUrl } from "../background";
+import { useState } from "react";
 import html2canvas from "html2canvas";
 
 function MainPage() {
   const navigate = useNavigate();
+  const [domain, setDomain] = useState<string>("");
+  const [time, setTime] = useState<number | null>(null);
+
+  //Get active tab URL and time spent
+  async function init() { 
+    console.log("from init"); 
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    console.log(tab.url);
+    setDomain(tab.url || "");
+    var timeSpent = await getTimeForUrl(tab.url || "");
+    console.log(timeSpent);
+    setTime(timeSpent);
+  }
+  init();
+ 
+    
 
   const CaptureChart = async () => {
     try {
@@ -47,6 +68,7 @@ function MainPage() {
               <PieChartWithKey />
             </div>
           </div>
+
           {/* Right Side */}
           <div className="flex justify-center w-[300px]">
             <div className="w-[260px] h-[400px] rounded-xl shadow p-4"

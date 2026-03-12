@@ -7,4 +7,6 @@
     "jsx": "react-jsx",
     "moduleResolution": "node"
   }
+  ,
+  "include": ["entrypoints", "assets", "chrome-env.d.ts"]
 }
