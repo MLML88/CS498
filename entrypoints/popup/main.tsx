@@ -3,10 +3,31 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
+import { getTimeForUrl } from "../background";
+import { useState } from "react";
 
 
 function MainPage() {
   const navigate = useNavigate();
+  const [domain, setDomain] = useState<string>("");
+  const [time, setTime] = useState<number | null>(null);
+
+  //Get active tab URL and time spent
+  async function init() { 
+    console.log("from init"); 
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    console.log(tab.url);
+    setDomain(tab.url || "");
+    var timeSpent = await getTimeForUrl(tab.url || "");
+    console.log(timeSpent);
+    setTime(timeSpent);
+  }
+  init();
+ 
+    
 
   return (
     <>
@@ -27,6 +48,9 @@ function MainPage() {
 
           <div className="w-[260px] bg-gray-200 rounded-x1 shadow p-4">
             Info goes here
+          <p className="text-sm text-gray-600 mt-2">Time spent on {domain}: {time} seconds</p>
+          
+
           </div>
         </div>
 

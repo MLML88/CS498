@@ -131,3 +131,24 @@ export default defineBackground(() => {
   console.log("Background time tracker started");
   init();
 });
+
+
+//return the total time spent on a URL in seconds
+export async function getTimeForUrl(url: string): Promise<number> {
+  function normalizeUrl(url: string): string {
+    try {
+      const u = new URL(url);
+      u.hash = "";
+      return u.toString();
+    } catch {
+      return url;
+    }
+  }
+  
+  type TimeMap = Record<string, number>;
+  const key = normalizeUrl(url);
+  const data = await chrome.storage.local.get("timeData");
+  const timeData: TimeMap = data.timeData || {};
+  console.log("Getting time for:", key, timeData[key] || 0);
+  return (timeData[key] || 0) / 1000;
+}
