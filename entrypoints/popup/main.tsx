@@ -5,7 +5,7 @@ import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
 import { getTimeForUrl } from "../background";
 import { useState } from "react";
-
+import html2canvas from "html2canvas";
 
 function MainPage() {
   const navigate = useNavigate();
@@ -29,11 +29,30 @@ function MainPage() {
  
     
 
+  const CaptureChart = async () => {
+    try {
+      const element = document.getElementById("image-container");
+      if (!element) {
+        navigate("/share");
+        return;
+      }
+      const canvas = await html2canvas(element, { scale: 2 });
+
+      const image = canvas.toDataURL("image/jpeg", 1.0);
+
+      sessionStorage.setItem("chartImage", image);
+  } catch (err) {
+    console.error("Screenshot failed: ", err);
+  }
+    navigate("/share");
+  };
+
   return (
     <>
       {/*<div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">*/}
       <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
 
+        {/* Header */}
         <div className="pb-2 mb-4 border-b border-black">
           <h1 className="text-xl font-semibold">WebTrack</h1>
         </div>
@@ -41,19 +60,25 @@ function MainPage() {
         {/*<h1 className="text-3xl font-bold underline">Hello World!</h1>
         <p className="text-xl font-semibold">Data Overview</p>*/}
 
-        <div className="flex items-start gap-4">
-          <div className="mt-4 w-[200px] h-[200px]">
-            <PieChartWithKey />
+          {/* Middle section */}
+        <div id="image-container" /*style={{ backgroundColor: "white", color: "black" }}*/ className="flex items-start justify-center gap-4">
+          {/* Left Side */}
+          <div className="flex justify-center items-start w-[300px]">
+            <div className="mt-4 w-[300px] h-[300px]">
+              <PieChartWithKey />
+            </div>
           </div>
 
-          <div className="w-[260px] bg-gray-200 rounded-x1 shadow p-4">
-            Info goes here
-          <p className="text-sm text-gray-600 mt-2">Time spent on {domain}: {time} seconds</p>
-          
-
+          {/* Right Side */}
+          <div className="flex justify-center w-[300px]">
+            <div className="w-[260px] h-[400px] rounded-xl shadow p-4"
+            style={{ backgroundColor: "#e9e5e8" }}>
+              Info goes here
+            </div>
           </div>
         </div>
 
+          {/* Footer */}
         <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-neutral-primary-soft border-t border-default">
         <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
               <button
@@ -66,7 +91,7 @@ function MainPage() {
               
               <button
                 type="button"
-                onClick={() => navigate("/share")}
+                onClick={CaptureChart}
                 className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
               >
                 Share
@@ -131,14 +156,33 @@ function MainPage() {
 
 function SharePage() {
   const navigate = useNavigate();
+
+  const downloadChart = () => {
+    const image = sessionStorage.getItem("chartImage");
+    if (!image) return;
+
+    const link = document.createElement("a");
+    link.href = image;
+    link.download = "webtrack-data.jpeg";
+    link.click();
+  };
+
   return (
     <>
       <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
-        <h1 className="text-3xl font-bold underline">Share this!</h1><button
-        type="button"
-        onClick={() => navigate("/")}
-        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-      >
+        <h1 className="text-3xl font-bold underline">Share this!</h1>
+
+        <button
+          onClick={downloadChart}
+          className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">
+            Download jpeg
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        >
         Back to Main
       </button>
       </div>
