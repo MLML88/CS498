@@ -1,3 +1,7 @@
+const record = storage.defineItem<Record<string, number>>('local:timeData', {
+  fallback: {},
+})
+
 export default defineBackground(() => {
   type TimeMap = Record<string, number>;
 
@@ -22,12 +26,14 @@ export default defineBackground(() => {
 
     const key = normalizeUrl(url);
 
-    const data = await chrome.storage.local.get("timeData");
+    // const data = await chrome.storage.local.get("timeData");
+    const data = await record.getValue();
     const timeData: TimeMap = data.timeData || {};
 
     timeData[key] = (timeData[key] || 0) + duration;
 
-    await chrome.storage.local.set({ timeData });
+    // await chrome.storage.local.set({ timeData });
+    await record.setValue({ timeData });
 
     console.log("Saving time:", key, duration);
   }
@@ -93,11 +99,18 @@ export default defineBackground(() => {
 
   //When tab URL changes (navigation)
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (tabId === activeTabId && changeInfo.url) {
-      console.log("from url change");
-      windowFocused = true;
-      await stopTracking();
-      await startTrackingCurrentTab();
+    if (changeInfo.status == 'complete' && tab.status == 'complete') {
+      if (tabId === activeTabId && changeInfo.url) {
+        console.log("from url change");
+        windowFocused = true;
+        await stopTracking();
+        await startTrackingCurrentTab();
+  
+      } else { //URL changing from new tab
+        console.log("URL change from blank tab");
+        windowFocused = true;
+        await startTrackingCurrentTab();
+      }
     }
   });
 
