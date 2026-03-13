@@ -6,7 +6,7 @@ import PieChartWithKey from "./PieChartWithKey";
 import { getTimeForUrl } from "../background";
 import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
-import { storage } from '#imports';
+// import { storage } from '#imports';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -74,7 +74,9 @@ function MainPage() {
       console.log("Loaded from storage: ", storedData);
 
       // Convert to the format the PieChart expects
-      const formatted: DataEntry[] = Object.entries(storedData.timeData).map(
+      const formatted: DataEntry[] = Object.entries(storedData.timeData)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
+      .slice(0, 8).map(
         ([domain, time]) => ({
           name: domain,
           value: time as number,
