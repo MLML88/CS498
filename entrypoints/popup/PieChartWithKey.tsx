@@ -7,22 +7,15 @@ interface DataEntry {
     value: number;
 }
 
-//Sample data
-const data: DataEntry[] = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
-    { name: 'Group E', value: 200 },
-    { name: 'Group F', value: 500 },
-    { name: 'Group G', value: 100 },
-    { name: 'Group H', value: 600 },
-];
+// Interface for props
+interface PieChartProps {
+    data: DataEntry[];
+}
 
 // Define the custom colors for the pie slices
 const COLORS = ['#0088FE', '#00C49A', '#FFBB28', '#FF8042', '#ff42ec', '#42cdff', '#ff4248', '#97ff42'];
 
-const PieChartWithKey: React.FC = () => {
+const PieChartWithKey: React.FC<PieChartProps> = ({ data }) => {
     return (
         // ResponsiveContainer ensures the chart adjjusts to its parent's size
         <ResponsiveContainer width="100%" height="100%">

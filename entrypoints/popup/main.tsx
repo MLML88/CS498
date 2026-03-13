@@ -4,13 +4,26 @@ import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
 import { getTimeForUrl } from "../background";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
+import { storage } from '#imports';
 
 function MainPage() {
   const navigate = useNavigate();
+
+  interface TimeData {
+   timeData: Record<string, number>; 
+  }
+
+  interface DataEntry {
+    name: string;
+    value: number;
+  }
+
   const [domain, setDomain] = useState<string>("");
   const [time, setTime] = useState<number | null>(null);
+  const [timeData, setTimeData] = useState<TimeData | null>(null);
+  const [dataEntry, setDataEntry] = useState<DataEntry[]>([]);
 
   //Get active tab URL and time spent
   async function init() { 
@@ -26,8 +39,6 @@ function MainPage() {
     setTime(timeSpent);
   }
   init();
- 
-    
 
   const CaptureChart = async () => {
     try {
@@ -47,6 +58,39 @@ function MainPage() {
     navigate("/share");
   };
 
+  
+  // On popup open get timeData from local storage
+  useEffect(() => {
+    console.log("Popup opened.");
+
+    const fetchData = async () => {
+      const storedData = await storage.getItem<TimeData>('local:timeData');
+
+      if(!storedData) {
+        console.log("timeData missing or empty.");
+        return;
+      }
+
+      console.log("Loaded from storage: ", storedData);
+
+      // Convert to the format the PieChart expects
+      const formatted: DataEntry[] = Object.entries(storedData.timeData).map(
+        ([domain, time]) => ({
+          name: domain,
+          value: time as number,
+        })
+      );
+
+      console.log("Formatted for Piechart: ", formatted);
+
+      setDataEntry(formatted);
+      
+    };
+
+    fetchData();
+
+  }, []);
+
   return (
     <>
       {/*<div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">*/}
@@ -65,7 +109,7 @@ function MainPage() {
           {/* Left Side */}
           <div className="flex justify-center items-start w-[300px]">
             <div className="mt-4 w-[300px] h-[300px]">
-              <PieChartWithKey />
+              <PieChartWithKey data={dataEntry ?? []} />
             </div>
           </div>
 
