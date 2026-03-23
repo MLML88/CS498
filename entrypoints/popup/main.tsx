@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
+import List from "./List";
 import { getTimeForUrl } from "../background";
 import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
@@ -25,20 +26,30 @@ function MainPage() {
   const [timeData, setTimeData] = useState<TimeData | null>(null);
   const [dataEntry, setDataEntry] = useState<DataEntry[]>([]);
 
-  //Get active tab URL and time spent
-  async function init() { 
-    console.log("from init"); 
-    const [tab] = await chrome.tabs.query({
-      active: true,
-      lastFocusedWindow: true,
-    });
-    console.log(tab.url);
-    setDomain(tab.url || "");
-    var timeSpent = await getTimeForUrl(tab.url || "");
-    console.log(timeSpent);
-    setTime(timeSpent);
-  }
-  init();
+    //Get active tab URL and time spent
+    async function init() { 
+      console.log("from init"); 
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        lastFocusedWindow: true,
+      });
+      if (!tab.url || tab.url === "about:blank") {
+        console.log("Invalid tab URL.");
+        return;
+      }
+      console.log(tab.url);
+      setDomain(tab.url);
+      var timeSpent = await getTimeForUrl(tab.url);
+      console.log(timeSpent);
+      setTime(timeSpent);
+    }
+
+    useEffect(() => {
+      init();
+    }, []);
+  useEffect(() => {
+    init();
+  }, []);
 
   const CaptureChart = async () => {
     try {
@@ -110,16 +121,16 @@ function MainPage() {
         <div id="image-container" /*style={{ backgroundColor: "white", color: "black" }}*/ className="flex items-start justify-center gap-4">
           {/* Left Side */}
           <div className="flex justify-center items-start w-[300px]">
-            <div className="mt-4 w-[300px] h-[300px]">
+              <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px]">
               <PieChartWithKey data={dataEntry ?? []} />
             </div>
           </div>
 
           {/* Right Side */}
           <div className="flex justify-center w-[300px]">
-            <div className="w-[260px] h-[400px] rounded-xl shadow p-4"
+            <div className="w-[300px] h-[400px] rounded-xl shadow p-4"
             style={{ backgroundColor: "#e9e5e8" }}>
-              Info goes here
+              <List data={dataEntry} />
             </div>
           </div>
         </div>
