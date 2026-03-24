@@ -18,7 +18,8 @@ function MainPage() {
 
   interface DataEntry {
     name: string;
-    value: number;
+    numValue: number;
+    strValue: string;
   }
 
   const [domain, setDomain] = useState<string>("");
@@ -69,6 +70,18 @@ function MainPage() {
     navigate("/share");
   };
 
+  // Converts the time from milliseconds to days:hours:minutes
+  function convertTime(milliseconds: number): string {
+    let hours: number = Math.floor(milliseconds/ 3600000); // milliseconds in an hour
+    let millisecondsLeft = milliseconds %  3600000
+    let minutes: number = Math.floor(millisecondsLeft / 60000); // milliseconds in a minute
+    millisecondsLeft = millisecondsLeft % 6000
+    let seconds: number = Math.floor(millisecondsLeft / 1000); // milliseconds in a day
+
+    let result: string = `${hours}h:${minutes}m:${seconds}s`;
+    return result;
+  }
+
   
   // On popup open get timeData from local storage
   useEffect(() => {
@@ -90,7 +103,8 @@ function MainPage() {
       .slice(0, 8).map(
         ([domain, time]) => ({
           name: domain,
-          value: time as number,
+          numValue: time as number,
+          strValue: convertTime(time as number),
         })
       );
 
