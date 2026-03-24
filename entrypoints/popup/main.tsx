@@ -64,6 +64,7 @@ function MainPage() {
       const image = canvas.toDataURL("image/jpeg", 1.0);
 
       sessionStorage.setItem("chartImage", image);
+      sessionStorage.setItem("chartData", JSON.stringify(dataEntry));
   } catch (err) {
     console.error("Screenshot failed: ", err);
   }
@@ -238,6 +239,38 @@ function SharePage() {
     link.click();
   };
 
+  const downloadCSV = () => {
+    const raw = sessionStorage.getItem("chartData");
+    if (!raw) return;
+
+    const data = JSON.parse(raw);
+
+    // CSV header
+    const header = ["Domain", "Time (ms)"];
+
+    // Convert rows
+    const rows = data.map((entry: any) => [
+      entry.name,
+      entry.numValue
+    ]);
+
+    // Combine into CSV string
+    const csvContent = [header, ...rows].map(row => row.join(",")).join("\n");
+
+    // Create blob
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    // Create download link
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+
+    link.href = url;
+    link.download = "webtrack-data.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
@@ -247,6 +280,13 @@ function SharePage() {
           onClick={downloadChart}
           className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">
             Download jpeg
+        </button>
+
+        <button
+          onClick={downloadCSV}
+          className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-2 px-4 rounded"
+        >
+          Download CSV
         </button>
 
         <button
