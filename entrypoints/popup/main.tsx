@@ -132,7 +132,7 @@ function MainPage() {
         <p className="text-xl font-semibold">Data Overview</p>*/}
 
           {/* Middle section */}
-        <div id="image-container" /*style={{ backgroundColor: "white", color: "black" }}*/ className="flex items-start justify-center gap-4">
+        <div id="image-container" className="flex items-start justify-center gap-4">
           {/* Left Side */}
           <div className="flex justify-center items-start w-[300px]">
               <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px]">

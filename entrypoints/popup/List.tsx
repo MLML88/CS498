@@ -17,7 +17,8 @@ export function List({ data = [] }: ListProps) {
         <thead className="sticky top-0">
           <tr>
             {TABLE_HEAD.map((head) => (
-              <th key={head} className="border-b border-gray-200 bg-gray-100 p-3 text-left text-xs font-semibold text-gray-700">
+              <th key={head} className="border-b p-3 text-left text-xs font-semibold"
+                style={{borderColor: "#e5e7eb",backgroundColor: "#f3f4f6", color: "#374151"}}>
                 {head}
               </th>
             ))}
@@ -26,17 +27,17 @@ export function List({ data = [] }: ListProps) {
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td colSpan={3} className="p-4 text-center text-gray-500">
+              <td colSpan={3} className="p-4 text-center" style={{ color: "#6b7280" }}>
                 No data available
               </td>
             </tr>
           ) : (
             data.map(({ name, strValue }) => (
-              <tr key={name} className="border-b border-gray-100">
-                <td className="p-3 text-gray-900">
+              <tr key={name} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                <td className="p-3" style={{ color: "#111827" }}>
                   {name}
                 </td>
-                <td className="p-3 text-gray-700">
+                <td className="p-3" style={{ color: "#374151" }}>
                   {strValue}
                 </td>
               </tr>
