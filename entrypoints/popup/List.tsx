@@ -1,6 +1,7 @@
 interface DataEntry {
   name: string;
-  value: number;
+  numValue: number;
+  strValue: string
 }
 
 interface ListProps {
@@ -30,13 +31,13 @@ export function List({ data = [] }: ListProps) {
               </td>
             </tr>
           ) : (
-            data.map(({ name, value }) => (
+            data.map(({ name, strValue }) => (
               <tr key={name} className="border-b border-gray-100">
                 <td className="p-3 text-gray-900">
                   {name}
                 </td>
                 <td className="p-3 text-gray-700">
-                  {value.toLocaleString()} ms
+                  {strValue}
                 </td>
               </tr>
             ))
