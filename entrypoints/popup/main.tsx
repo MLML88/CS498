@@ -139,8 +139,8 @@ function MainPage() {
           </div>
 
           {/* Right Side */}
-          <div className="flex justify-center w-[300px]">
-            <div className="w-[300px] h-[400px] rounded-xl shadow p-4"
+          <div className="flex justify-center w-[330px]">
+            <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
             style={{ backgroundColor: "#e9e5e8" }}>
               <List data={dataEntry} />
             </div>
@@ -148,12 +148,12 @@ function MainPage() {
         </div>
 
           {/* Footer */}
-        <div className="fixed bottom-0 left-0 z-50 w-full h-16 bg-neutral-primary-soft border-t border-default">
-        <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+        <div className="fixed bottom-0 left-0 z-50 w-full h-12 bg-neutral-primary-soft border-t border-default">
+        <div className="grid h-full grid-cols-2 gap-2 px-2 font-medium">
               <button
                 type="button"
                 onClick={() => navigate("/settings")}
-                className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-3 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
               >
                 Settings
               </button>
@@ -161,7 +161,7 @@ function MainPage() {
               <button
                 type="button"
                 onClick={CaptureChart}
-                className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+                className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-3 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
               >
                 Share
               </button>

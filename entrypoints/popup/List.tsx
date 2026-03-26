@@ -34,8 +34,8 @@ export function List({ data = [] }: ListProps) {
           ) : (
             data.map(({ name, strValue }) => (
               <tr key={name} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                <td className="p-3 overflow-hidden text-ellipsis whitespace-nowrap" style={{ color: "#111827" }} title={name}>
-                  {name.length > 20 ? name.substring(0, 20) + '...' : name}
+                <td className="p-3" style={{ color: "#111827" }}>
+                  {name}
                 </td>
                 <td className="p-3" style={{ color: "#374151" }}>
                   {strValue}
