@@ -48,9 +48,6 @@ function MainPage() {
     useEffect(() => {
       init();
     }, []);
-  useEffect(() => {
-    init();
-  }, []);
 
   const CaptureChart = async () => {
     try {
