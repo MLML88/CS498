@@ -73,7 +73,7 @@ function MainPage() {
     let hours: number = Math.floor(milliseconds/ 3600000); // milliseconds in an hour
     let millisecondsLeft = milliseconds %  3600000
     let minutes: number = Math.floor(millisecondsLeft / 60000); // milliseconds in a minute
-    millisecondsLeft = millisecondsLeft % 6000
+    millisecondsLeft = millisecondsLeft % 60000
     let seconds: number = Math.floor(millisecondsLeft / 1000); // milliseconds in a day
 
     let result: string = `${hours}h:${minutes}m:${seconds}s`;
