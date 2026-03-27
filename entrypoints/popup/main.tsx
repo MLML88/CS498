@@ -132,14 +132,14 @@ function MainPage() {
           {/* Middle section */}
         <div id="image-container" className="flex items-start justify-center gap-4">
           {/* Left Side */}
-          <div className="flex justify-center items-start w-[300px]">
+          <div className="ml-4 flex justify-center items-start w-[300px]">
               <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px]">
               <PieChartWithKey data={dataEntry ?? []} />
             </div>
           </div>
 
           {/* Right Side */}
-          <div className="flex justify-center w-[330px]">
+          <div className="ml-2 flex justify-center w-[330px]">
             <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
             style={{ backgroundColor: "#e9e5e8" }}>
               <List data={dataEntry} />
@@ -148,7 +148,7 @@ function MainPage() {
         </div>
 
           {/* Footer */}
-        <div className="fixed bottom-0 left-0 z-50 w-full h-12 bg-neutral-primary-soft border-t border-default">
+        <div className="fixed bottom-0 left-0 z-50 w-full h-12 bg-neutral-primary-soft">
         <div className="grid h-full grid-cols-2 gap-2 px-2 font-medium">
               <button
                 type="button"
