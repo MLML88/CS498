@@ -87,21 +87,21 @@ function MainPage() {
     today.setHours(0, 0, 0, 0);
     const todayKey = today.toISOString().split('T')[0];
 
-    const weekStart = new Date(today);
-    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-    const weekStartKey = weekStart.toISOString().split('T')[0];
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgoKey = sevenDaysAgo.toISOString().split('T')[0];
 
     return allDates.filter(dateKey => {
       switch (frame) {
         case "today":
           return dateKey === todayKey;
         case "week":
-          return dateKey >= weekStartKey;
+          return dateKey >= sevenDaysAgoKey;
         case "allTime":
           return true;
       }
     });
-  }
+  }   
 
   
   // On popup open get timeData from local storage
@@ -157,9 +157,9 @@ function MainPage() {
       <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
 
         {/* Header */}
-        <div className="pb-2 mb-4 border-b border-black">
+        <div className="pb-2 mb-4 border-b border-black flex justify-between items-center">
           <h1 className="text-xl font-semibold">WebTrack</h1>
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2">
             <button
               onClick={() => setTimeFrame("today")}
               className={`px-3 py-1 rounded text-sm font-medium ${
