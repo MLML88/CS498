@@ -4,7 +4,7 @@ import { MemoryRouter, Routes, Route, useNavigate } from "react-router-dom";
 import "./style.css";
 import PieChartWithKey from "./PieChartWithKey";
 import List from "./List";
-import { getTimeForUrl } from "../background";
+import { getTimeForUrl, getAllDailyData } from "../background";
 import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 // import { storage } from '#imports';
@@ -26,6 +26,7 @@ function MainPage() {
   const [time, setTime] = useState<number | null>(null);
   const [timeData, setTimeData] = useState<TimeData | null>(null);
   const [dataEntry, setDataEntry] = useState<DataEntry[]>([]);
+  const [timeFrame, setTimeFrame] = useState<"today" | "week" | "allTime">("today");
 
     //Get active tab URL and time spent
     async function init() { 
@@ -80,41 +81,75 @@ function MainPage() {
     return result;
   }
 
+  // Filter date keys by timeframe
+  function getDateKeysForTimeFrame(frame: "today" | "week" | "allTime", allDates: string[]): string[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayKey = today.toISOString().split('T')[0];
+
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const sevenDaysAgoKey = sevenDaysAgo.toISOString().split('T')[0];
+
+    return allDates.filter(dateKey => {
+      switch (frame) {
+        case "today":
+          return dateKey === todayKey;
+        case "week":
+          return dateKey >= sevenDaysAgoKey;
+        case "allTime":
+          return true;
+      }
+    });
+  }   
+
   
   // On popup open get timeData from local storage
   useEffect(() => {
-    console.log("Popup opened.");
+    console.log("Fetching data for timeframe:", timeFrame);
 
     const fetchData = async () => {
-      const storedData = await storage.getItem<TimeData>('local:timeData');
+      try {
+        const allDailyData = await getAllDailyData();
+        console.log("All daily data:", allDailyData);
+        
+        const dateKeys = getDateKeysForTimeFrame(timeFrame, Object.keys(allDailyData));
+        console.log("Filtered date keys:", dateKeys);
 
-      if(!storedData) {
-        console.log("timeData missing or empty.");
-        return;
+        // Aggregate by domain across selected dates
+        const aggregated: Record<string, number> = {};
+        dateKeys.forEach(dateKey => {
+          const dayData = allDailyData[dateKey];
+          Object.entries(dayData).forEach(([domain, duration]) => {
+            aggregated[domain] = (aggregated[domain] || 0) + (duration as number);
+          });
+        });
+
+        console.log("Aggregated data:", aggregated);
+
+        // Convert to the format the PieChart expects
+        const formatted: DataEntry[] = Object.entries(aggregated)
+        .sort(([, a], [, b]) => (b as number) - (a as number))
+        .slice(0, 8).map(
+          ([domain, time]) => ({
+            name: domain,
+            numValue: time as number,
+            strValue: convertTime(time as number),
+          })
+        );
+
+        console.log("Formatted for Piechart: ", formatted);
+
+        setDataEntry(formatted);
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-
-      console.log("Loaded from storage: ", storedData);
-
-      // Convert to the format the PieChart expects
-      const formatted: DataEntry[] = Object.entries(storedData.timeData)
-      .sort(([, a], [, b]) => (b as number) - (a as number))
-      .slice(0, 8).map(
-        ([domain, time]) => ({
-          name: domain,
-          numValue: time as number,
-          strValue: convertTime(time as number),
-        })
-      );
-
-      console.log("Formatted for Piechart: ", formatted);
-
-      setDataEntry(formatted);
       
     };
 
     fetchData();
 
-  }, []);
+  }, [timeFrame]);
 
   return (
     <>
@@ -122,8 +157,40 @@ function MainPage() {
       <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
 
         {/* Header */}
-        <div className="pb-2 mb-4 border-b border-black">
+        <div className="pb-2 mb-4 border-b border-black flex justify-between items-center">
           <h1 className="text-xl font-semibold">WebTrack</h1>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setTimeFrame("today")}
+              className={`px-3 py-1 rounded text-sm font-medium ${
+                timeFrame === "today"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+              }`}
+            >
+              Today
+            </button>
+            <button
+              onClick={() => setTimeFrame("week")}
+              className={`px-3 py-1 rounded text-sm font-medium ${
+                timeFrame === "week"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+              }`}
+            >
+              This Week
+            </button>
+            <button
+              onClick={() => setTimeFrame("allTime")}
+              className={`px-3 py-1 rounded text-sm font-medium ${
+                timeFrame === "allTime"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+              }`}
+            >
+              All Time
+            </button>
+          </div>
         </div>
 
         {/*<h1 className="text-3xl font-bold underline">Hello World!</h1>
@@ -169,47 +236,7 @@ function MainPage() {
               {/* add template */}
 
               
-              <button id="multiLevelDropdownButton" data-dropdown-toggle="multi-dropdown" className="inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none" type="button">
-                Dropdown button 
-                <svg className="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
-              </button>
-
-              <div id="multi-dropdown" className="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44">
-                  <ul className="p-2 text-sm text-body font-medium" aria-labelledby="multiLevelDropdownButton">
-                    <li>
-                      <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Dashboard</a>
-                    </li>
-                    <li>
-                      <button id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown" data-dropdown-placement="right-start" type="button" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">
-                        Dropdown
-                        <svg className="h-4 w-4 ms-auto rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/></svg>
-                      </button>
-                        <div id="doubleDropdown" className="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44">
-                          <ul className="p-2 text-sm text-body font-medium" aria-labelledby="doubleDropdownButton">
-                            <li>
-                              <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Overview</a>
-                            </li>
-                            <li>
-                              <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">My downloads</a>
-                            </li>
-                            <li>
-                              <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Billing</a>
-                            </li>
-                            <li>
-                              <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Rewards</a>
-                            </li>
-                          </ul>
-                      </div>
-                    </li>
-                    <li>
-                      <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Earnings</a>
-                    </li>
-                    <li>
-                      <a href="#" className="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Sign out</a>
-                    </li>
-                  </ul>
-              </div>
-
+              
 
 
 
@@ -270,18 +297,25 @@ function SharePage() {
 
   return (
     <>
-      <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
+    <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
+
+        {/* Header */}
+        <div className="pb-2 mb-4 border-b border-black">
+          <h1 className="text-xl font-semibold">WebTrack</h1>
+        </div>
+
+      <div className="w-full flex flex-col items-center justify-center gap-4 h-[400px]">
         <h1 className="text-3xl font-bold underline">Share this!</h1>
 
         <button
           onClick={downloadChart}
-          className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded">
+          className="w-36 bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">
             Download jpeg
         </button>
 
         <button
           onClick={downloadCSV}
-          className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-2 px-4 rounded"
+          className="w-36 bg-purple-500 hover:bg-purple-400 text-white font-bold py-2 px-4 border-b-4 border-purple-800 hover:border-purple-600 rounded"
         >
           Download CSV
         </button>
@@ -289,10 +323,11 @@ function SharePage() {
         <button
           type="button"
           onClick={() => navigate("/")}
-          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+          className="w-36 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
         >
         Back to Main
       </button>
+      </div>
       </div>
     </>
   );

@@ -2,6 +2,16 @@ const record = storage.defineItem<Record<string, number>>('local:timeData', {
   fallback: {},
 })
 
+const dailyData = storage.defineItem<Record<string, Record<string, number>>>('local:dailyData', {
+  fallback: {},
+})
+
+// Helper function to get today's date key in YYYY-MM-DD format
+function getDateKey(timestamp?: number): string {
+  const date = new Date(timestamp || Date.now());
+  return date.toISOString().split('T')[0];
+}
+
 export default defineBackground(() => {
   type TimeMap = Record<string, number>;
 
@@ -25,17 +35,22 @@ export default defineBackground(() => {
     if (!url || duration <= 0) return;
 
     const key = normalizeUrl(url);
+    const dateKey = getDateKey();
 
-    // const data = await chrome.storage.local.get("timeData");
-    const data = await record.getValue();
-    const timeData: TimeMap = data.timeData || {};
-
+    // Update aggregated time (all-time)
+    const timeData = await record.getValue();
     timeData[key] = (timeData[key] || 0) + duration;
+    await record.setValue(timeData);
 
-    // await chrome.storage.local.set({ timeData });
-    await record.setValue({ timeData });
+    // Update daily data
+    const allDailyData = await dailyData.getValue();
+    if (!allDailyData[dateKey]) {
+      allDailyData[dateKey] = {};
+    }
+    allDailyData[dateKey][key] = (allDailyData[dateKey][key] || 0) + duration;
+    await dailyData.setValue(allDailyData);
 
-    console.log("Saving time:", key, duration);
+    console.log("Saving time:", key, duration, "on", dateKey);
   }
 
   //Stop tracking current tab
@@ -163,4 +178,26 @@ export async function getTimeForUrl(url: string): Promise<number> {
   const timeData: TimeMap = data.timeData || {};
   console.log("Getting time for:", key, timeData[key] || 0);
   return (timeData[key] || 0) / 1000;
+}
+
+// Get daily data for a specific date
+export async function getDailyData(dateKey: string) {
+  try {
+    const allDailyData = await dailyData.getValue();
+    return allDailyData[dateKey] || {};
+  } catch (error) {
+    console.error("Error getting daily data:", error);
+    return {};
+  }
+}
+
+// Get all daily data
+export async function getAllDailyData() {
+  try {
+    const data = await dailyData.getValue();
+    return data;
+  } catch (error) {
+    console.error("Error getting all daily data:", error);
+    return {};
+  }
 }
