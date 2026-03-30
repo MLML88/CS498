@@ -1,4 +1,4 @@
-const record = storage.defineItem<Record<string, number>>('local:timeData', {
+const record = storage.defineItem<Record<string, number>>('local:allTimeData', {
   fallback: {},
 })
 
@@ -38,9 +38,9 @@ export default defineBackground(() => {
     const dateKey = getDateKey();
 
     // Update aggregated time (all-time)
-    const timeData = await record.getValue();
-    timeData[key] = (timeData[key] || 0) + duration;
-    await record.setValue(timeData);
+    const allTimeData = await record.getValue();
+    allTimeData[key] = (allTimeData[key] || 0) + duration;
+    await record.setValue(allTimeData);
 
     // Update daily data
     const allDailyData = await dailyData.getValue();
@@ -174,10 +174,10 @@ export async function getTimeForUrl(url: string): Promise<number> {
   
   type TimeMap = Record<string, number>;
   const key = normalizeUrl(url);
-  const data = await chrome.storage.local.get("timeData");
-  const timeData: TimeMap = data.timeData || {};
-  console.log("Getting time for:", key, timeData[key] || 0);
-  return (timeData[key] || 0) / 1000;
+  const data = await chrome.storage.local.get("allTimeData");
+  const allTimeData: TimeMap = data.allTimeData || {};
+  console.log("Getting time for:", key, allTimeData[key] || 0);
+  return (allTimeData[key] || 0) / 1000;
 }
 
 // Get daily data for a specific date
