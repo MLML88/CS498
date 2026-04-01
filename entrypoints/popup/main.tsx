@@ -133,7 +133,8 @@ function MainPage() {
         <div id="image-container" className="flex items-start justify-center gap-4">
           {/* Left Side */}
           <div className="ml-4 flex justify-center items-start w-[300px]">
-              <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px]">
+              <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px] text-center">
+                <h2 style={{ width: 'auto', whiteSpace: 'nowrap', fontSize: '16px', marginBottom: '10px', fontWeight: 'medium' }}>Most Viewed Web Pages</h2>
               <PieChartWithKey data={dataEntry ?? []} />
             </div>
           </div>
