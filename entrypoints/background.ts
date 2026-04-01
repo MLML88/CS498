@@ -6,6 +6,10 @@ const dailyData = storage.defineItem<Record<string, Record<string, number>>>('lo
   fallback: {},
 })
 
+const tags = storage.defineItem<Record<string, string[]>>('local:tags', {
+  fallback: {},
+})
+
 // Helper function to get today's date key in YYYY-MM-DD format
 function getDateKey(timestamp?: number): string {
   const date = new Date(timestamp || Date.now());
@@ -101,6 +105,18 @@ export default defineBackground(() => {
 
     if (tab?.id) {
       await startTrackingCurrentTab();
+    }
+
+    // Initialize default tags on first run
+    const existingTags = await tags.getValue();
+    if (Object.keys(existingTags).length === 0) {
+      const defaultTags: Record<string, string[]> = {
+        "Work": ["linkedin.com", "github.com", "stackoverflow.com"],
+        "Social": ["facebook.com", "twitter.com", "instagram.com"],
+        "Entertainment": ["youtube.com", "netflix.com"],
+        "Productivity": ["notion.so", "trello.com", "slack.com"],
+      };
+      await tags.setValue(defaultTags);
     }
   }
 
@@ -199,5 +215,89 @@ export async function getAllDailyData() {
   } catch (error) {
     console.error("Error getting all daily data:", error);
     return {};
+  }
+}
+
+// Tag management functions
+export async function getAllTags() {
+  try {
+    const data = await tags.getValue();
+    return data;
+  } catch (error) {
+    console.error("Error getting tags:", error);
+    return {};
+  }
+}
+
+export async function createTag(tagName: string) {
+  try {
+    if (tagName.length > 48) {
+      console.error("Tag name exceeds 48 character limit");
+      return false;
+    }
+    const allTags = await tags.getValue();
+    if (!allTags[tagName]) {
+      allTags[tagName] = [];
+      await tags.setValue(allTags);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error creating tag:", error);
+    return false;
+  }
+}
+
+export async function deleteTag(tagName: string) {
+  try {
+    const allTags = await tags.getValue();
+    delete allTags[tagName];
+    await tags.setValue(allTags);
+    return true;
+  } catch (error) {
+    console.error("Error deleting tag:", error);
+    return false;
+  }
+}
+
+export async function addDomainToTag(tagName: string, domain: string) {
+  try {
+    const allTags = await tags.getValue();
+    if (!allTags[tagName]) {
+      allTags[tagName] = [];
+    }
+    if (!allTags[tagName].includes(domain)) {
+      allTags[tagName].push(domain);
+      await tags.setValue(allTags);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error adding domain to tag:", error);
+    return false;
+  }
+}
+
+export async function removeDomainFromTag(tagName: string, domain: string) {
+  try {
+    const allTags = await tags.getValue();
+    if (allTags[tagName]) {
+      allTags[tagName] = allTags[tagName].filter(d => d !== domain);
+      await tags.setValue(allTags);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error removing domain from tag:", error);
+    return false;
+  }
+}
+
+export async function getTagsForDomain(domain: string) {
+  try {
+    const allTags = await tags.getValue();
+    return Object.keys(allTags).filter(tagName => 
+      allTags[tagName].includes(domain)
+    );
+  } catch (error) {
+    console.error("Error getting tags for domain:", error);
+    return [];
   }
 }
