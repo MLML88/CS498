@@ -10,7 +10,7 @@ const tags = storage.defineItem<Record<string, string[]>>('local:tags', {
   fallback: {},
 })
 
-// Helper function to get today's date key in YYYY-MM-DD format
+// Helper function to get today's date key in YYYY-MM-DD format using UTC
 function getDateKey(timestamp?: number): string {
   const date = new Date(timestamp || Date.now());
   return date.toISOString().split('T')[0];

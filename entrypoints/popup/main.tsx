@@ -91,22 +91,35 @@ function MainPage() {
     return result;
   }
 
-  // Filter date keys by timeframe
+  // Filter date keys by timeframe, converting UTC dates to local timezone
   function getDateKeysForTimeFrame(frame: "today" | "week" | "allTime", allDates: string[]): string[] {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayKey = today.toISOString().split('T')[0];
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000; // timezone offset in milliseconds
+    
+    // Get local today's midnight
+    const localTodayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const localTomorrowMidnight = new Date(localTodayMidnight.getTime() + 24 * 60 * 60 * 1000);
+    console.log("Local today start:", localTodayMidnight.toISOString(), "Local tomorrow start:", localTomorrowMidnight.toISOString());
 
-    const sevenDaysAgo = new Date(today);
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const sevenDaysAgoKey = sevenDaysAgo.toISOString().split('T')[0];
+    // Convert local dates to UTC to find matching UTC date keys
+    const utcTodayStart = new Date(localTodayMidnight.getTime() + offset);
+    const utcTodayEnd = new Date(localTomorrowMidnight.getTime() + offset);
+    const utcTodayStartKey = utcTodayStart.toISOString().split('T')[0];
+    const utcTodayEndKey = utcTodayEnd.toISOString().split('T')[0];
+    console.log("UTC today start:", utcTodayStartKey, "UTC today end:", utcTodayEndKey);
 
+    // For week, get 7 days ago in local time, then convert to UTC
+    const localWeekAgoMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7, 0, 0, 0, 0);
+    const utcWeekAgoStart = new Date(localWeekAgoMidnight.getTime() + offset);
+    const utcWeekAgoStartKey = utcWeekAgoStart.toISOString().split('T')[0];
+    console.log("UTC week ago start:", utcWeekAgoStartKey, "UTC today end:", utcTodayEndKey);
+    
     return allDates.filter(dateKey => {
       switch (frame) {
         case "today":
-          return dateKey === todayKey;
+          return dateKey >= utcTodayStartKey && dateKey <= utcTodayEndKey;
         case "week":
-          return dateKey >= sevenDaysAgoKey;
+          return dateKey >= utcWeekAgoStartKey && dateKey <= utcTodayEndKey;
         case "allTime":
           return true;
       }
