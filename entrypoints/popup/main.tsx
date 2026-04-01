@@ -234,14 +234,8 @@ function MainPage() {
                 Share
               </button>
 
-              {/* add template */}
-
-              
-              
-
-
-
-              
+              {/* add template */}     
+                          
         </div>
         </div>
 
@@ -339,7 +333,35 @@ function SettingsPage() {
   return (
     <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold underline">Settings</h1>
+      <button 
+        type="button"
+        onClick={() => navigate("/activityWarnings")}
+        className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded"
+      >
+        Activty Alarms
+      </button>
       <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+      >
+        Back to Main
+      </button>
+  </div>
+  );
+}
+
+function ActivityWarningsPage() {
+  const navigate = useNavigate();
+  return (
+    <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
+      <h1 className="text-3xl font-bold underline">Activity Alarms</h1>
+        <div className="ml-2 flex justify-center w-[330px]">
+            <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
+            style={{ backgroundColor: "#e9e5e8" }}>
+            </div>
+          </div>
+        <button
         type="button"
         onClick={() => navigate("/")}
         className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
@@ -357,6 +379,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/" element={<MainPage />} />
         <Route path="/share" element={<SharePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/activityWarnings" element={<ActivityWarningsPage />} />
       </Routes>
     </MemoryRouter>
   </React.StrictMode>
