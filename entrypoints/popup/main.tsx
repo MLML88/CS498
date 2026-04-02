@@ -7,6 +7,7 @@ import List from "./List";
 import { getTimeForUrl, getAllDailyData } from "../background";
 import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
+import { ActivityWarningList } from "./ActivityWarningList";
 // import { storage } from '#imports';
 
 function MainPage() {
@@ -209,7 +210,7 @@ function MainPage() {
           {/* Right Side */}
           <div className="ml-2 flex justify-center w-[330px]">
             <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
-            style={{ backgroundColor: "#e9e5e8" }}>
+              style={{ backgroundColor: "#e9e5e8" }}>
               <List data={dataEntry} />
             </div>
           </div>
@@ -357,10 +358,11 @@ function ActivityWarningsPage() {
     <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold underline">Activity Alarms</h1>
         <div className="ml-2 flex justify-center w-[330px]">
-            <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
+          <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
             style={{ backgroundColor: "#e9e5e8" }}>
-            </div>
+            <ActivityWarningList />
           </div>
+        </div>
         <button
         type="button"
         onClick={() => navigate("/")}
