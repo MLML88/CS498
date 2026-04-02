@@ -57,12 +57,21 @@ function MainPage() {
         navigate("/share");
         return;
       }
+
+      const isDark = document.body.className === "dark";
+
+      element.style.backgroundColor = isDark ? "#1e1e1e" : "#f3f4f6";
+      element.style.color = isDark ? "white" : "black";
+
       const canvas = await html2canvas(element, { scale: 2 });
 
-      const image = canvas.toDataURL("image/jpeg", 1.0);
+      element.style.backgroundColor = "";
+      element.style.color = "";
 
+      const image = canvas.toDataURL("image/jpeg", 1.0);
       sessionStorage.setItem("chartImage", image);
       sessionStorage.setItem("chartData", JSON.stringify(dataEntry));
+
   } catch (err) {
     console.error("Screenshot failed: ", err);
   }
@@ -85,7 +94,8 @@ function MainPage() {
   function getDateKeysForTimeFrame(frame: "today" | "week" | "allTime", allDates: string[]): string[] {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const todayKey = today.toISOString().split('T')[0];
+    const todayKey = today.toISOString().split('T')[0]; // possible issue?
+    //const todayKey = new Date().toISOString().split('T')[0];
 
     const sevenDaysAgo = new Date(today);
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -113,6 +123,14 @@ function MainPage() {
         const allDailyData = await getAllDailyData();
         console.log("All daily data:", allDailyData);
         
+        // log output
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayKey = today.toISOString().split('T')[0];
+        console.log("todayKey:", todayKey);
+        console.log("available keys:", Object.keys(allDailyData));
+        // log output
+
         const dateKeys = getDateKeysForTimeFrame(timeFrame, Object.keys(allDailyData));
         console.log("Filtered date keys:", dateKeys);
 
@@ -156,63 +174,67 @@ function MainPage() {
       {/*<div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">*/}
       <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
 
-        {/* Header */}
-        <div className="pb-2 mb-4 border-b border-black flex justify-between items-center">
-          <h1 className="text-xl font-semibold">WebTrack</h1>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setTimeFrame("today")}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                timeFrame === "today"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-              }`}
-            >
-              Today
-            </button>
-            <button
-              onClick={() => setTimeFrame("week")}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                timeFrame === "week"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-              }`}
-            >
-              This Week
-            </button>
-            <button
-              onClick={() => setTimeFrame("allTime")}
-              className={`px-3 py-1 rounded text-sm font-medium ${
-                timeFrame === "allTime"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-              }`}
-            >
-              All Time
-            </button>
-          </div>
-        </div>
+        <div id="image-container" className="p-2">
 
-        {/*<h1 className="text-3xl font-bold underline">Hello World!</h1>
-        <p className="text-xl font-semibold">Data Overview</p>*/}
+          {/* Header */}
+          <div className="pb-2 border-b border-black mb-4 flex justify-between items-center">
+            <h1 className="text-xl font-semibold">WebTrack</h1>
+            <div className="flex gap-2">
 
-          {/* Middle section */}
-        <div id="image-container" className="flex items-start justify-center gap-4">
-          {/* Left Side */}
-          <div className="ml-4 flex justify-center items-start w-[300px]">
-              <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px] text-center">
-                <h2 style={{ width: 'auto', whiteSpace: 'nowrap', fontSize: '16px', marginBottom: '10px', fontWeight: 'medium' }}>Most Viewed Web Pages</h2>
-              <PieChartWithKey data={dataEntry ?? []} />
+              <button
+                onClick={() => setTimeFrame("today")}
+                className="px-3 py-1 rounded text-sm font-medium"
+                style={{
+                  backgroundColor: timeFrame === "today" ? '#2563eb' : '#d1d5db',
+                  color: timeFrame === "today" ? 'white' : '#374151',
+                }}
+              >
+                Today
+              </button>
+
+              <button
+                onClick={() => setTimeFrame("week")}
+                className="px-3 py-1 rounded text-sm font-medium"
+                style={{
+                  backgroundColor: timeFrame === "week" ? '#2563eb' : '#d1d5db',
+                  color: timeFrame === "week" ? 'white' : '#374151',
+                }}
+              >
+                This Week
+              </button>
+
+              <button
+                onClick={() => setTimeFrame("allTime")}
+                className="px-3 py-1 rounded text-sm font-medium"
+                style={{
+                  backgroundColor: timeFrame === "allTime" ? '#2563eb' : '#d1d5db',
+                  color: timeFrame === "allTime" ? 'white' : '#374151',
+                }}
+              >
+                All Time
+              </button>
             </div>
           </div>
 
-          {/* Right Side */}
-          <div className="ml-2 flex justify-center w-[330px]">
-            <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
-            style={{ backgroundColor: "#e9e5e8" }}>
-              <List data={dataEntry} />
+            {/* Middle section */}
+          <div className="flex items-start justify-center gap-4">
+            {/* Left Side */}
+            <div className="ml-4 flex justify-center items-start w-[300px]">
+                <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px] text-center">
+                  <h2 style={{ width: 'auto', whiteSpace: 'nowrap', fontSize: '16px', marginBottom: '10px', fontWeight: 'medium' }}>Most Viewed Web Pages</h2>
+                <PieChartWithKey data={dataEntry ?? []} />
+              </div>
+            </div>
+
+            {/* Right Side */}
+            <div className="ml-2 flex justify-center w-[330px]">
+              <div className="w-[400px] h-[425px] rounded-xl shadow p-4"
+              style={{ backgroundColor: "#e9e5e8" }}>
+                <List data={dataEntry} />
+              </div>
             </div>
           </div>
+        
         </div>
 
           {/* Footer */}
@@ -334,11 +356,30 @@ function SharePage() {
   );
 }
 
-function SettingsPage() {
+function SettingsPage({
+  darkMode,
+  setDarkMode,
+}: {
+  darkMode: boolean;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const navigate = useNavigate();
+
   return (
     <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold underline">Settings</h1>
+
+      {/*Toggle Switch*/}
+      <label className="flex items-center gap-3 cursor-pointer">
+        <span className="text-lg">Dark Mode</span>
+        <input
+          type="checkbox"
+          checked={darkMode}
+          onChange={() => setDarkMode(!darkMode)}
+          className="w-5 h-5"
+        />
+      </label>
+
       <button
         type="button"
         onClick={() => navigate("/")}
@@ -350,7 +391,7 @@ function SettingsPage() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+/*ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MemoryRouter>
       <Routes>
@@ -360,4 +401,42 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       </Routes>
     </MemoryRouter>
   </React.StrictMode>
+);*/
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <AppWrapper />
+  </React.StrictMode>
 );
+
+function AppWrapper() {
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("darkMode");
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Load saved preference
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode");
+    if (saved) setDarkMode(JSON.parse(saved));
+  }, []);
+
+  // Apply + save
+  useEffect(() => {
+    document.body.className = darkMode ? "dark" : "light";
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  return (
+    <MemoryRouter>
+      <Routes>
+        <Route path="/" element={<MainPage />} />
+        <Route path="/share" element={<SharePage />} />
+        <Route
+          path="/settings"
+          element={<SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} />}
+        />
+      </Routes>
+    </MemoryRouter>
+  );
+}
