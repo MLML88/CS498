@@ -1,7 +1,5 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer, Tooltip } from 'recharts'; 
-import './style.css';
-
 
 //Define the shape of the data
 interface DataEntry {
