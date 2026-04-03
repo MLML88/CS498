@@ -377,7 +377,55 @@ function SharePage() {
   );
 }
 //need to resolve changes here 
-function SettingsPage() {
+function SettingsPage({
+   darkMode,
+  setDarkMode,
+}: {
+  darkMode: boolean;
+  setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const navigate = useNavigate();
+
+
+  return (
+    <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px] flex flex-col">
+      <div className="pb-2 mb-4 border-b border-black">
+        <h1 className="text-xl font-semibold">WebTrack - Settings</h1>
+      </div>
+
+      {/*Toggle Switch*/}
+      <label className="flex items-center gap-3 cursor-pointer">
+        <span className="text-lg">Dark Mode</span>
+        <input
+          type="checkbox"
+          checked={darkMode}
+          onChange={() => setDarkMode(!darkMode)}
+          className="w-5 h-5"
+        />
+      </label>
+
+      <div className="flex-1 overflow-y-auto flex flex-col gap-4 p-4">
+        <button
+          type="button"
+          onClick={() => navigate("/tags")}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-3 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        >
+          Manage Tags
+        </button>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded w-full"
+      >
+        Back to Main
+      </button>
+    </div>
+  );
+}
+
+function TagsPage() {
   const navigate = useNavigate();
   const [tags, setTags] = useState<Record<string, string[]>>({});
   const [newTagName, setNewTagName] = useState("");
@@ -385,6 +433,7 @@ function SettingsPage() {
   const [availableDomains, setAvailableDomains] = useState<string[]>([]);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+
 
   useEffect(() => {
     const fetchTagsAndDomains = async () => {
@@ -553,23 +602,50 @@ function SettingsPage() {
 
       <button
         type="button"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/settings")}
         className="mt-4 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded w-full"
       >
-        Back to Main
+        Back to Settings
       </button>
     </div>
   );
 }
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
+    <AppWrapper />
+  </React.StrictMode>
+);
+
+function AppWrapper() {
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("darkMode");
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Load saved preference
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode");
+    if (saved) setDarkMode(JSON.parse(saved));
+  }, []);
+
+  // Apply + save
+  useEffect(() => {
+    document.body.className = darkMode ? "dark" : "light";
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  return (
     <MemoryRouter>
       <Routes>
         <Route path="/" element={<MainPage />} />
         <Route path="/share" element={<SharePage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route
+          path="/settings"
+          element={<SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} />}
+        />
+        <Route path="/tags" element={<TagsPage />} />
       </Routes>
     </MemoryRouter>
-  </React.StrictMode>
-);
+  );
+}
+
