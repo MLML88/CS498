@@ -254,44 +254,13 @@ function MainPage() {
           </div>
         </div>
 
-              <button
-                onClick={() => setTimeFrame("today")}
-                className="px-3 py-1 rounded text-sm font-medium"
-                style={{
-                  backgroundColor: timeFrame === "today" ? '#2563eb' : '#d1d5db',
-                  color: timeFrame === "today" ? 'white' : '#374151',
-                }}
-              >
-                Today
-              </button>
-
-              <button
-                onClick={() => setTimeFrame("week")}
-                className="px-3 py-1 rounded text-sm font-medium"
-                style={{
-                  backgroundColor: timeFrame === "week" ? '#2563eb' : '#d1d5db',
-                  color: timeFrame === "week" ? 'white' : '#374151',
-                }}
-              >
-                This Week
-              </button>
-
-          {/* Middle section */}
-        <div id="image-container" className="flex items-start justify-center gap-4">
-          {/* Left Side */}
-          <div className="ml-4 flex justify-center items-start w-[300px]">
-              <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px]">
-              <PieChartWithKey data={dataEntry?.slice(0, 8) ?? []} />
-            </div>
-          </div>
-
             {/* Middle section */}
           <div className="flex items-start justify-center gap-4">
             {/* Left Side */}
             <div className="ml-4 flex justify-center items-start w-[300px]">
                 <div className="mt-4 w-[300px] h-[300px] min-w-[300px] min-h-[300px] text-center">
                   <h2 style={{ width: 'auto', whiteSpace: 'nowrap', fontSize: '16px', marginBottom: '10px', fontWeight: 'medium' }}>Most Viewed Web Pages</h2>
-                <PieChartWithKey data={dataEntry ?? []} />
+                <PieChartWithKey data={dataEntry?.slice(0, 8) ?? []} />
               </div>
             </div>
 
@@ -336,8 +305,6 @@ function MainPage() {
         </div>
         </div>
 
-        
-      </div>
     </>
   );
 }
