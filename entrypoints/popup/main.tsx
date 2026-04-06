@@ -322,9 +322,9 @@ function SharePage() {
           className="w-36 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
         >
         Back to Main
-      </button>
+        </button>
       </div>
-      </div>
+    </div>
     </>
   );
 }
@@ -339,7 +339,7 @@ function SettingsPage() {
         onClick={() => navigate("/activityWarnings")}
         className="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-4 border-b-4 border-gray-700 hover:border-gray-500 rounded"
       >
-        Activty Alarms
+        Activity Alarms
       </button>
       <button
         type="button"
@@ -354,6 +354,12 @@ function SettingsPage() {
 
 function ActivityWarningsPage() {
   const navigate = useNavigate();
+
+  const addActivityWarning = () => {
+    // Implementation for adding activity warning
+  };
+
+
   return (
     <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold underline">Activity Alarms</h1>
@@ -363,13 +369,65 @@ function ActivityWarningsPage() {
             <ActivityWarningList />
           </div>
         </div>
+        <div>
+          <button
+          type="button"
+          onClick={() => navigate("/")}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded mr-2"
+        >
+          Back to Main
+        </button>
         <button
-        type="button"
-        onClick={() => navigate("/")}
-        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
-      >
-        Back to Main
-      </button>
+          type="button"
+          onClick={() => navigate("/addActivityWarning")}
+          className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded"
+        >
+          Add Activity Warning
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+
+function AddActivityWarningPage() {
+  const navigate = useNavigate();
+
+  interface ActivityWarningProps {
+  domain: string;
+  currentTime: number;
+  alarmTime: number;
+  }
+
+  return (
+    <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
+      <h1 className="text-3xl font-bold underline">Add New Activity Warning</h1>
+      <div className="flex flex-col justify-center w-[600px] h-[150px] rounded-xl shadow p-4 gap-4">
+        <label style={{ fontSize: '16px' }}>Domain:    
+          <input type="text" id="domain" placeholder="www.example.com"  size={46}/>
+        </label>
+        <label style={{ fontSize: '16px' }}>Duration: 
+          <input type="number" id="hours" min="0" placeholder="Hours"/> :
+          <input type="number" id="minutes" min="0" placeholder="Minutes"/> 
+        </label>
+      </div>
+      <div>
+        <button
+          type="button"
+          onClick={() => navigate("/activityWarnings")}
+          className="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded mr-2"
+        >
+          Add Warning
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate("/activityWarnings")}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        >
+          Back
+        </button>
+      </div>
   </div>
   );
 }
@@ -378,10 +436,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MemoryRouter>
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route path="/" element={<AddActivityWarningPage />} />
         <Route path="/share" element={<SharePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/activityWarnings" element={<ActivityWarningsPage />} />
+        <Route path="/addActivityWarning" element={<AddActivityWarningPage />} />
       </Routes>
     </MemoryRouter>
   </React.StrictMode>
