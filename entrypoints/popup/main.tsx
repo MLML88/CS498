@@ -355,11 +355,6 @@ function SettingsPage() {
 function ActivityWarningsPage() {
   const navigate = useNavigate();
 
-  const addActivityWarning = () => {
-    // Implementation for adding activity warning
-  };
-
-
   return (
     <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
       <h1 className="text-3xl font-bold underline">Activity Alarms</h1>
@@ -399,6 +394,24 @@ function AddActivityWarningPage() {
   currentTime: number;
   alarmTime: number;
   }
+  
+    const addActivityWarning = () => {
+      const domainInput = document.getElementById("domain") as HTMLInputElement;
+      const hoursInput = document.getElementById("hours") as HTMLInputElement;
+      const minutesInput = document.getElementById("minutes") as HTMLInputElement;
+
+      // Trim domain and parse time inputs into ints
+      const domain = domainInput.value.trim();
+      const hours = parseInt(hoursInput.value) || 0;
+      const minutes = parseInt(minutesInput.value) || 0;
+
+      const alarmTime = (hours * 3600 + minutes * 60) * 1000; // Convert to milliseconds
+
+      if (!domain) {
+        alert("Please enter a domain.");
+        return;
+      }
+    };
 
   return (
     <div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">
