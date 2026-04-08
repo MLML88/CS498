@@ -5,17 +5,25 @@ function SharePage() {
 
   const downloadChart = () => {
     const image = sessionStorage.getItem("chartImage");
-    if (!image) return;
+    if (!image) {
+      console.log("Image Invalid");
+      return;
+    }
 
     const link = document.createElement("a");
     link.href = image;
     link.download = "webtrack-data.jpeg";
+    document.body.appendChild(link)
     link.click();
+    link.remove();
   };
 
   const downloadCSV = () => {
     const raw = sessionStorage.getItem("chartData");
-    if (!raw) return;
+    if (!raw) {
+      console.log("CSV Invalid");
+      return;
+    }
 
     const data = JSON.parse(raw);
 

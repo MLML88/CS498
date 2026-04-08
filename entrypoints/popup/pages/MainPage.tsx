@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import html2canvas from "html2canvas";
+import { toJpeg } from "html-to-image"
 
 import { getAllDailyData, getTimeForUrl } from "../services/Time";
 import { getAllTags } from "../services/Tag";
 import List from "../components/List";
 import PieChartWithKey from "../components/PieChartWithKey";
-
 
 function MainPage() {
   const navigate = useNavigate();
@@ -28,6 +27,7 @@ function MainPage() {
   const [timeFrame, setTimeFrame] = useState<"today" | "week" | "allTime">("today");
   const [allTags, setAllTags] = useState<Record<string, string[]>>({});
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const imageRef = useRef<HTMLDivElement | null>(null);
 
   //Get active tab URL and time spent
   async function init() {
@@ -59,29 +59,24 @@ function MainPage() {
 
   const CaptureChart = async () => {
     try {
-      const element = document.getElementById("image-container");
-      if (!element) {
+      if (!imageRef.current) {
+        console.log("Invalid image ref from CaptureChart")
         navigate("/share");
         return;
       }
 
-      const isDark = document.body.className === "dark";
+      const dataUrl = await toJpeg(imageRef.current, {
+        quality: 0.95,
+        pixelRatio: 2,
+        cacheBust: true,
+      });
 
-      element.style.backgroundColor = isDark ? "#1e1e1e" : "#f3f4f6";
-      element.style.color = isDark ? "white" : "black";
-
-      const canvas = await html2canvas(element, { scale: 2 });
-
-      element.style.backgroundColor = "";
-      element.style.color = "";
-
-      const image = canvas.toDataURL("image/jpeg", 1.0);
-      sessionStorage.setItem("chartImage", image);
+      sessionStorage.setItem("chartImage", dataUrl);
       sessionStorage.setItem("chartData", JSON.stringify(dataEntry));
-
     } catch (err) {
-      console.error("Screenshot failed: ", err);
+      console.error("Screenshot failed:", err);
     }
+
     navigate("/share");
   };
 
@@ -198,7 +193,7 @@ function MainPage() {
   return (
     <>
       {/*<div className="fit-content p-4 bg-gray-100 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4">*/}
-      <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
+      <div ref={imageRef} className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
 
         {/* Header */}
         <div className="pb-2 mb-4 border-b border-black flex justify-between items-center">
@@ -208,7 +203,7 @@ function MainPage() {
               onClick={() => setTimeFrame("today")}
               className={`px-3 py-1 rounded text-sm font-medium ${timeFrame === "today"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
             >
               Today
@@ -217,7 +212,7 @@ function MainPage() {
               onClick={() => setTimeFrame("week")}
               className={`px-3 py-1 rounded text-sm font-medium ${timeFrame === "week"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
             >
               This Week
@@ -226,7 +221,7 @@ function MainPage() {
               onClick={() => setTimeFrame("allTime")}
               className={`px-3 py-1 rounded text-sm font-medium ${timeFrame === "allTime"
                   ? "bg-blue-600 text-white"
-                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
             >
               All Time
@@ -235,7 +230,7 @@ function MainPage() {
             <select
               value={selectedTag || ""}
               onChange={(e) => setSelectedTag(e.target.value || null)}
-              className="px-3 py-1 rounded text-sm font-medium border border-gray-300 bg-white hover:bg-gray-100"
+              className="px-3 py-1 rounded text-sm font-medium border border-gray-100 bg-gray-200 text-gray-700 hover:bg-gray-300"
             >
               <option value="">All Tags</option>
               {Object.keys(allTags).map(tagName => (
