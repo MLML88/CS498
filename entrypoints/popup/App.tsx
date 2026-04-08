@@ -5,6 +5,7 @@ import MainPage from "./pages/MainPage";
 import SharePage from "./pages/SharePage";
 import SettingsPage from "./pages/SettingsPage";
 import TagsPage from "./pages/TagsPage";
+import AlarmsPage from "./pages/AlarmsPage";
 
 function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -34,6 +35,7 @@ function App() {
           element={<SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} />}
         />
         <Route path="/tags" element={<TagsPage />} />
+        <Route path="/alarms" element={<AlarmsPage />} />
       </Routes>
     </MemoryRouter>
   );
