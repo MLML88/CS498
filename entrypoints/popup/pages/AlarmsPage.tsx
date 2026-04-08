@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 
 import { getAllDailyData } from "../services/Time";
 import { Alarm ,getAllAlarms, createAlarm, deleteAlarm } from "../services/Alarm";
+import { normalizeUrl } from "../../background"; // Import the normalizeUrl function from background.ts
 
 function AlarmsPage() {
   const navigate = useNavigate();
   const [alarms, setAlarms] = useState<Record<string, Alarm>>({});
   const [newAlarmDomain, setNewAlarmDomain] = useState("");
-  const [newAlarmHours, setNewAlarmHours] = useState("");
-  const [newAlarmMinutes, setNewAlarmMinutes] = useState("");
+  var [newAlarmHours, setNewAlarmHours] = useState("");
+  var [newAlarmMinutes, setNewAlarmMinutes] = useState("");
 
 
   useEffect(() => {
@@ -21,6 +22,8 @@ function AlarmsPage() {
   }, []);
 
   const handleCreateAlarm = async () => {
+    
+    // Input validation
     if (!newAlarmDomain) {
       alert("Please enter a domain for the alarm.");
       return;
@@ -29,9 +32,21 @@ function AlarmsPage() {
       alert("Please enter a duration for the alarm.");
       return;
     }
-    const newAlarmDurationMs = (newAlarmHours * 3600 + newAlarmMinutes * 60) * 1000;
+    if (newAlarmHours === "") {
+      newAlarmHours = "0";
+    }
+    if (newAlarmMinutes === "") {
+      newAlarmMinutes = "0"; 
+    }
+
+
+
+    const shortAlarmDomain = normalizeUrl(newAlarmDomain.trim());
+    console.log("newAlarmHours:", parseInt(newAlarmHours), "newAlarmMinutes:", parseInt(newAlarmMinutes));
+
+    const newAlarmDurationMs = (parseInt(newAlarmHours) * 3600 + parseInt(newAlarmMinutes) * 60) * 1000;
     const newAlarm: Alarm = {
-      domain: newAlarmDomain,
+      domain: shortAlarmDomain,
       currentTime: 0,
       duration: newAlarmDurationMs,
     };
@@ -40,8 +55,8 @@ function AlarmsPage() {
     const allAlarms = await getAllAlarms();
     setAlarms(allAlarms);
     setNewAlarmDomain("");
-    setNewAlarmHours(0);
-    setNewAlarmMinutes(0);
+    setNewAlarmHours("");
+    setNewAlarmMinutes("");
   };
 
   const handleDeleteAlarm = async (alarmId: string) => {
@@ -110,7 +125,7 @@ function AlarmsPage() {
                   type="number"
                   value={newAlarmHours}
                   min={0}
-                  onChange={(e) => setNewAlarmHours(Number(e.target.value))}
+                  onChange={(e) => setNewAlarmHours(e.target.value)}
                   placeholder="Duration (hours)"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded"
                   onKeyPress={(e) => e.key === "Enter" && handleCreateAlarm()}
@@ -119,7 +134,7 @@ function AlarmsPage() {
                   type="number"
                   value={newAlarmMinutes}
                   min={0}
-                  onChange={(e) => setNewAlarmMinutes(Number(e.target.value))}
+                  onChange={(e) => setNewAlarmMinutes(e.target.value)}
                   placeholder="Duration (minutes)"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded"
                   onKeyPress={(e) => e.key === "Enter" && handleCreateAlarm()}

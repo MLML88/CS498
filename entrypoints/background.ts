@@ -17,7 +17,7 @@ function getDateKey(timestamp?: number): string {
 }
 
 //Normalize URL (modify this to get the url we want to display)
-function normalizeUrl(url: string): string {
+export function normalizeUrl(url: string): string {
   try {
     const u = new URL(url);
     return u.hostname.replace(/^www\./, "");
