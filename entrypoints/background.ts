@@ -1,5 +1,7 @@
 import { record, dailyData } from "./popup/services/Time";
 import { tags } from "./popup/services/Tag";
+import { alarms } from "./popup/services/Alarm";
+import { iconButton } from "@material-tailwind/react";
 
 type TimeMap = Record<string, number>;
 
@@ -43,6 +45,17 @@ async function saveTime(url: string, duration: number) {
   }
   allDailyData[dateKey][key] = (allDailyData[dateKey][key] || 0) + duration;
   await dailyData.setValue(allDailyData);
+
+  // Update alarms if any match the domain
+  const allAlarms = await alarms.getValue();
+  for (const [alarmId, alarm] of Object.entries(allAlarms)) {
+    if (alarm.domain === key) {
+      allAlarms[alarmId].currentTime += duration;
+      console.log(`Updated alarm ${alarmId} for domain ${key}: currentTime = ${allAlarms[alarmId].currentTime}`);
+    }
+  }
+  await alarms.setValue(allAlarms);
+
 
   console.log("Saving time:", key, duration, "on", dateKey);
 }
@@ -163,6 +176,29 @@ export default defineBackground(() => {
       activeUrl = null;
     }
   });
+
+   // Create alert if current time exceeds alarm duration
+  setInterval(async () => {
+    const allAlarms = await alarms.getValue();
+
+    for (const [alarmId, alarm] of Object.entries(allAlarms)) {
+      if (alarm.currentTime >= alarm.duration) {
+        console.log(`Alarm triggered for domain ${alarm.domain}`);
+        // Create alert or notification here
+        chrome.notifications.create({
+          type: "basic",
+          iconUrl: chrome.runtime.getURL("alarm.png"),
+          title: "Time Tracker Alarm",
+          message: `You've spent ${Math.floor(alarm.currentTime / 3600000)}h ${Math.floor((alarm.currentTime % 3600000) / 60000)}m on ${alarm.domain}, which exceeds your set duration!`
+        });
+
+        console.log("iconUrl:", chrome.runtime.getURL("assets/alarm.png"));
+        // delete the alarm after triggering
+        delete allAlarms[alarmId];
+        await alarms.setValue(allAlarms);
+      }
+    }
+  }, 1000); // Check every second
 
   console.log("Background time tracker started");
   init();

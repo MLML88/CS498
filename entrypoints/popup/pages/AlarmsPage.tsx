@@ -8,8 +8,8 @@ function AlarmsPage() {
   const navigate = useNavigate();
   const [alarms, setAlarms] = useState<Record<string, Alarm>>({});
   const [newAlarmDomain, setNewAlarmDomain] = useState("");
-  const [newAlarmHours, setNewAlarmHours] = useState(0);
-  const [newAlarmMinutes, setNewAlarmMinutes] = useState(0);
+  const [newAlarmHours, setNewAlarmHours] = useState("");
+  const [newAlarmMinutes, setNewAlarmMinutes] = useState("");
 
 
   useEffect(() => {
@@ -21,6 +21,14 @@ function AlarmsPage() {
   }, []);
 
   const handleCreateAlarm = async () => {
+    if (!newAlarmDomain) {
+      alert("Please enter a domain for the alarm.");
+      return;
+    }
+    if (newAlarmHours === "" && newAlarmMinutes === "") {
+      alert("Please enter a duration for the alarm.");
+      return;
+    }
     const newAlarmDurationMs = (newAlarmHours * 3600 + newAlarmMinutes * 60) * 1000;
     const newAlarm: Alarm = {
       domain: newAlarmDomain,
