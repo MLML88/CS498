@@ -41,9 +41,6 @@ function SettingsPage({
         >
           Manage Activity Alarms
         </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto flex flex-col gap-4 p-4">
         <button
           type="button"
           onClick={() => navigate("/blacklist")}
