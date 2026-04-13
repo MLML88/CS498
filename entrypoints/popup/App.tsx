@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
 import { MemoryRouter, Routes, Route } from "react-router-dom"
 
-import MainPage from "./pages/MainPage"
-import SharePage from "./pages/SharePage"
-import SettingsPage from "./pages/SettingsPage"
-import TagsPage from "./pages/TagsPage"
+import MainPage from "./pages/MainPage";
+import SharePage from "./pages/SharePage";
+import SettingsPage from "./pages/SettingsPage";
+import TagsPage from "./pages/TagsPage";
+import AlarmsPage from "./pages/AlarmsPage";
 import BlacklistPage from "./pages/BlacklistPage"
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           element={<SettingsPage darkMode={darkMode} setDarkMode={setDarkMode} />}
         />
         <Route path="/tags" element={<TagsPage />} />
+        <Route path="/alarms" element={<AlarmsPage />} />
         <Route path="/blacklist" element={<BlacklistPage />} />
       </Routes>
     </MemoryRouter>
