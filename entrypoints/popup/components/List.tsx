@@ -1,14 +1,14 @@
 interface DataEntry {
-  name: string;
-  numValue: number;
+  name: string
+  numValue: number
   strValue: string
 }
 
 interface ListProps {
-  data?: DataEntry[];
+  data?: DataEntry[]
 }
 
-const TABLE_HEAD = ["Domain", "Time", ""];
+const TABLE_HEAD = ["Domain", "Time", ""]
 
 export function List({ data = [] }: ListProps) {
   return (
@@ -17,27 +17,44 @@ export function List({ data = [] }: ListProps) {
         <thead className="sticky top-0">
           <tr>
             {TABLE_HEAD.map((head) => (
-              <th key={head} className="border-b p-3 text-left text-xs font-semibold"
-                style={{borderColor: "#e5e7eb",backgroundColor: "#f3f4f6", color: "#374151"}}>
+              <th
+                key={head}
+                className="border-b p-3 text-left text-xs font-semibold
+                         border-gray-200 dark:border-gray-700
+                         bg-gray-100 dark:bg-gray-800
+                         text-gray-700 dark:text-gray-200"
+              >
                 {head}
               </th>
             ))}
           </tr>
         </thead>
+
         <tbody>
           {data.length === 0 ? (
             <tr>
-              <td colSpan={3} className="p-4 text-center" style={{ color: "#6b7280" }}>
+              <td
+                colSpan={3}
+                className="p-4 text-center text-gray-500 dark:text-gray-400"
+              >
                 No data available
               </td>
             </tr>
           ) : (
             data.map(({ name, strValue }) => (
-              <tr key={name} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                <td className="p-3 overflow-hidden text-ellipsis whitespace-nowrap" style={{ color: "#111827" }} title={name}>
-                  {name.length > 20 ? name.substring(0, 20) + '...' : name}
+              <tr
+                key={name}
+                className="border-b border-gray-100 dark:border-gray-700"
+              >
+                <td
+                  className="p-3 overflow-hidden text-ellipsis whitespace-nowrap
+                           text-gray-900 dark:text-gray-100"
+                  title={name}
+                >
+                  {name.length > 20 ? name.substring(0, 20) + "..." : name}
                 </td>
-                <td className="p-3" style={{ color: "#374151" }}>
+
+                <td className="p-3 text-gray-700 dark:text-gray-300">
                   {strValue}
                 </td>
               </tr>
@@ -46,7 +63,7 @@ export function List({ data = [] }: ListProps) {
         </tbody>
       </table>
     </div>
-  );
+  )
 }
 
-export default List;
+export default List
