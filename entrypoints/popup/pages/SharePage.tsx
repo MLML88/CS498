@@ -1,73 +1,77 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 
 function SharePage() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const downloadChart = () => {
-    const image = sessionStorage.getItem("chartImage");
+    const image = sessionStorage.getItem("chartImage")
     if (!image) {
-      console.log("Image Invalid");
-      return;
+      console.log("Image Invalid")
+      return
     }
 
-    const link = document.createElement("a");
-    link.href = image;
-    link.download = "webtrack-data.jpeg";
+    const link = document.createElement("a")
+    link.href = image
+    link.download = "webtrack-data.jpeg"
     document.body.appendChild(link)
-    link.click();
-    link.remove();
-  };
+    link.click()
+    link.remove()
+  }
 
   const downloadCSV = () => {
-    const raw = sessionStorage.getItem("chartData");
+    const raw = sessionStorage.getItem("chartData")
     if (!raw) {
-      console.log("CSV Invalid");
-      return;
+      console.log("CSV Invalid")
+      return
     }
 
-    const data = JSON.parse(raw);
+    const data = JSON.parse(raw)
 
     // CSV header
-    const header = ["Domain", "Time (ms)"];
+    const header = ["Domain", "Time (ms)"]
 
     // Convert rows
     const rows = data.map((entry: any) => [
       entry.name,
       entry.numValue
-    ]);
+    ])
 
     // Combine into CSV string
-    const csvContent = [header, ...rows].map(row => row.join(",")).join("\n");
+    const csvContent = [header, ...rows].map(row => row.join(",")).join("\n")
 
     // Create blob
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([csvContent], { type: "text/csvcharset=utf-8" })
 
     // Create download link
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a")
+    const url = URL.createObjectURL(blob)
 
-    link.href = url;
-    link.download = "webtrack-data.csv";
-    link.click();
+    link.href = url
+    link.download = "webtrack-data.csv"
+    link.click()
 
-    URL.revokeObjectURL(url);
-  };
+    URL.revokeObjectURL(url)
+  }
 
   return (
     <>
-      <div className="relative p-4 bg-gray-100 rounded-lg shadow-md w-[700px] h-[550px]">
-
+      <div className="relative p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md w-[700px] h-[550px] text-black dark:text-white">
         {/* Header */}
-        <div className="pb-2 mb-4 border-b border-black">
-          <h1 className="text-xl font-semibold">WebTrack</h1>
+        <div className="pb-2 mb-4 border-b border-black dark:border-gray-700">
+          <h1 className="text-xl font-semibold text-black dark:text-white">
+            WebTrack
+          </h1>
         </div>
 
         <div className="w-full flex flex-col items-center justify-center gap-4 h-[400px]">
-          <h1 className="text-3xl font-bold underline">Share this!</h1>
+          <h1 className="text-3xl font-bold underline text-black dark:text-white">
+            Share this!
+          </h1>
 
           <button
             onClick={downloadChart}
-            className="w-36 bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded">
+            className="w-36 bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded"
+          >
             Download jpeg
           </button>
 
@@ -88,7 +92,7 @@ function SharePage() {
         </div>
       </div>
     </>
-  );
+  )
 }
 
 export default SharePage

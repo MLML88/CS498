@@ -1,26 +1,2 @@
 @import "tailwindcss";
-
-/* .custom-tooltip {
-    background: white;
-    padding: 20px;
-    border: 1px solid black;
-} */
-
-.light {
-  background-color: #f3f4f6; /* matches bg-gray-100 */
-  color: black;
-}
-
-.dark {
-  background-color: #121212;
-  color: white;
-}
-
-/* Optional: fix card backgrounds in dark mode */
-.dark .bg-gray-100 {
-  background-color: #1e1e1e !important;
-}
-
-.dark .bg-blue-500 {
-  background-color: #2563eb;
-}
+@custom-variant dark (&:where(.dark, .dark *));
