@@ -31,19 +31,15 @@ function MainPage() {
 
   //Get active tab URL and time spent
   async function init() {
-    console.log("from init")
     const [tab] = await chrome.tabs.query({
       active: true,
       lastFocusedWindow: true,
     })
     if (!tab.url || tab.url === "about:blank") {
-      console.log("Invalid tab URL.")
       return
     }
-    console.log(tab.url)
     setDomain(tab.url)
     var timeSpent = await getTimeForUrl(tab.url)
-    console.log(timeSpent)
     setTime(timeSpent)
   }
 
@@ -60,7 +56,6 @@ function MainPage() {
   const CaptureChart = async () => {
     try {
       if (!imageRef.current) {
-        console.log("Invalid image ref from CaptureChart")
         navigate("/share")
         return
       }
@@ -100,20 +95,17 @@ function MainPage() {
     // Get local today's midnight
     const localTodayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
     const localTomorrowMidnight = new Date(localTodayMidnight.getTime() + 24 * 60 * 60 * 1000)
-    console.log("Local today start:", localTodayMidnight.toISOString(), "Local tomorrow start:", localTomorrowMidnight.toISOString())
 
     // Convert local dates to UTC to find matching UTC date keys
     const utcTodayStart = new Date(localTodayMidnight.getTime() + offset)
     const utcTodayEnd = new Date(localTomorrowMidnight.getTime() + offset)
     const utcTodayStartKey = utcTodayStart.toISOString().split('T')[0]
     const utcTodayEndKey = utcTodayEnd.toISOString().split('T')[0]
-    console.log("UTC today start:", utcTodayStartKey, "UTC today end:", utcTodayEndKey)
 
     // For week, get 7 days ago in local time, then convert to UTC
     const localWeekAgoMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7, 0, 0, 0, 0)
     const utcWeekAgoStart = new Date(localWeekAgoMidnight.getTime() + offset)
     const utcWeekAgoStartKey = utcWeekAgoStart.toISOString().split('T')[0]
-    console.log("UTC week ago start:", utcWeekAgoStartKey, "UTC today end:", utcTodayEndKey)
 
     return allDates.filter(dateKey => {
       switch (frame) {
@@ -129,23 +121,16 @@ function MainPage() {
 
   // On popup open get timeData from local storage
   useEffect(() => {
-    console.log("Fetching data for timeframe:", timeFrame, "tag:", selectedTag)
-
     const fetchData = async () => {
       try {
         const allDailyData = await getAllDailyData()
-        console.log("All daily data:", allDailyData)
 
         // log output
         const today = new Date()
         today.setHours(0, 0, 0, 0)
         const todayKey = today.toISOString().split('T')[0]
-        console.log("todayKey:", todayKey)
-        console.log("available keys:", Object.keys(allDailyData))
-        // log output
 
         const dateKeys = getDateKeysForTimeFrame(timeFrame, Object.keys(allDailyData))
-        console.log("Filtered date keys:", dateKeys)
 
         // Aggregate by domain across selected dates
         let aggregated: Record<string, number> = {}
@@ -164,8 +149,6 @@ function MainPage() {
           )
         }
 
-        console.log("Aggregated data:", aggregated)
-
         // Convert to the format the PieChart expects
         const formatted: DataEntry[] = Object.entries(aggregated)
           .sort(([, a], [, b]) => (b as number) - (a as number))
@@ -176,8 +159,6 @@ function MainPage() {
               strValue: convertTime(time as number),
             })
           )
-
-        console.log("Formatted for Piechart: ", formatted)
 
         setDataEntry(formatted)
       } catch (error) {

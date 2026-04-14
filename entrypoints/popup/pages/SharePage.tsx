@@ -6,7 +6,6 @@ function SharePage() {
   const downloadChart = () => {
     const image = sessionStorage.getItem("chartImage")
     if (!image) {
-      console.log("Image Invalid")
       return
     }
 
@@ -21,7 +20,6 @@ function SharePage() {
   const downloadCSV = () => {
     const raw = sessionStorage.getItem("chartData")
     if (!raw) {
-      console.log("CSV Invalid")
       return
     }
 

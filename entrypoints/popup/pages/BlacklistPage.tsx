@@ -51,8 +51,6 @@ function BlacklistPage() {
     }
     delete allDailyData[dateKey][domain]
     await dailyData.setValue(allDailyData)
-
-    console.log(`Added ${domain} to blacklist`)
   }
 
   const handleRemove = async (domain: string) => {
@@ -77,8 +75,6 @@ function BlacklistPage() {
     }
     allDailyData[dateKey][domain] = 0
     await dailyData.setValue(allDailyData)
-
-    console.log(`Removed ${domain} from blacklist`)
   }
 
   const filteredDomains = availableDomains.filter(domain =>
