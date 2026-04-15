@@ -52,13 +52,10 @@ async function saveTime(url: string, duration: number) {
   for (const [alarmId, alarm] of Object.entries(allAlarms)) {
     if (alarm.domain === key) {
       allAlarms[alarmId].currentTime += duration;
-      console.log(`Updated alarm ${alarmId} for domain ${key}: currentTime = ${allAlarms[alarmId].currentTime}`);
     }
   }
   await alarms.setValue(allAlarms);
 
-
-  console.log("Saving time:", key, duration, "on", dateKey);
 }
 
 //Stop tracking current tab
@@ -68,12 +65,9 @@ async function stopTracking() {
   const duration = Date.now() - startTime
 
   if (duration <= 0 || duration > 1000 * 60 * 60 * 12) {
-    console.log("Invalid duration skipped: ", duration)
     startTime = null
     return
   }
-
-  console.log("Stop tracking:", activeUrl, duration)
 
   await saveTime(activeUrl, duration)
 
@@ -99,8 +93,6 @@ async function startTrackingCurrentTab() {
   activeTabId = tab.id
   activeUrl = tab.url
   startTime = Date.now()
-
-  console.log("Start tracking:", activeUrl)
 }
 
 async function init() {
@@ -130,7 +122,6 @@ export default defineBackground(() => {
 
   //When active tab changes
   chrome.tabs.onActivated.addListener(async () => {
-    console.log("from active tab")
     windowFocused = true
     await stopTracking()
     await startTrackingCurrentTab()
@@ -140,13 +131,11 @@ export default defineBackground(() => {
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status == 'complete' && tab.status == 'complete') {
       if (tabId === activeTabId && changeInfo.url) {
-        console.log("from url change")
         windowFocused = true
         await stopTracking()
         await startTrackingCurrentTab()
 
       } else { //URL changing from new tab
-        console.log("URL change from blank tab")
         windowFocused = true
         await startTrackingCurrentTab()
       }
@@ -157,12 +146,10 @@ export default defineBackground(() => {
   chrome.windows.onFocusChanged.addListener(async (windowId) => {
     if (windowId === chrome.windows.WINDOW_ID_NONE) {
       //Window lost focus
-      console.log("Lost focus")
       windowFocused = false
       await stopTracking()
     } else {
       //Window gained focus
-      console.log("Regained focus")
       windowFocused = true
       if (activeTabId !== null) {
         await startTrackingCurrentTab()
@@ -185,7 +172,6 @@ export default defineBackground(() => {
 
     for (const [alarmId, alarm] of Object.entries(allAlarms)) {
       if (alarm.currentTime >= alarm.duration) {
-        console.log(`Alarm triggered for domain ${alarm.domain}`);
         // Create alert or notification here
         chrome.notifications.create({
           type: "basic",
@@ -194,7 +180,6 @@ export default defineBackground(() => {
           message: `You've spent ${Math.floor(alarm.currentTime / 3600000)}h ${Math.floor((alarm.currentTime % 3600000) / 60000)}m on ${alarm.domain}, which exceeds your set duration!`
         });
 
-        console.log("iconUrl:", chrome.runtime.getURL("assets/alarm.png"));
         // delete the alarm after triggering
         delete allAlarms[alarmId];
         await alarms.setValue(allAlarms);
@@ -202,6 +187,5 @@ export default defineBackground(() => {
     }
   }, 1000); // Check every second
 
-  console.log("Background time tracker started");
   init();
 });

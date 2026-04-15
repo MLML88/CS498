@@ -40,7 +40,6 @@ function AlarmsPage() {
     }
 
     const shortAlarmDomain = normalizeUrl(newAlarmDomain.trim());
-    console.log("newAlarmHours:", parseInt(newAlarmHours), "newAlarmMinutes:", parseInt(newAlarmMinutes));
 
     const newAlarmDurationMs = (parseInt(newAlarmHours) * 3600 + parseInt(newAlarmMinutes) * 60) * 1000;
     const newAlarm: Alarm = {
@@ -58,7 +57,6 @@ function AlarmsPage() {
   };
 
   const handleDeleteAlarm = async (alarmId: string) => {
-    console.log("Deleting alarm with ID:", alarmId);
     await deleteAlarm(alarmId);
     const allAlarms = await getAllAlarms();
     setAlarms(allAlarms);

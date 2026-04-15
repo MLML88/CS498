@@ -37,7 +37,6 @@ export async function deleteAlarm (alarmId: string) {
       const allAlarms = await alarms.getValue();
       delete allAlarms[alarmId];
       await alarms.setValue(allAlarms);
-      console.log("Deleted alarm with ID:", alarmId);
       return true;
     } catch (error) {
       console.error("Error deleting alarm:", error);

@@ -18,7 +18,6 @@ const COLORS = ['#0088FE', '#00C49A', '#FFBB28', '#FF8042', '#ff42ec', '#42cdff'
 
 // Define custome tooltip for pie slices
 const CustomTooltip = ({ active, payload }: any) => {
-    console.log("Payload: ", payload)
     if (active && payload && payload.length) {
         const data = payload[0].payload
         return (
@@ -32,7 +31,6 @@ const CustomTooltip = ({ active, payload }: any) => {
 }
 
 const PieChartWithKey: React.FC<PieChartProps> = ({ data }) => {
-    console.log("data: ", data)
     return (
         // ResponsiveContainer ensures the chart adjjusts to its parent's size
         <ResponsiveContainer width="100%" height="100%">

@@ -22,7 +22,6 @@ export async function getTimeForUrl(url: string): Promise<number> {
   const key = normalizeUrl(url)
   const data = await chrome.storage.local.get("allTimeData")
   const allTimeData: TimeMap = data.allTimeData || {}
-  console.log("Getting time for:", key, allTimeData[key] || 0)
   return (allTimeData[key] || 0) / 1000
 }
 
