@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import { deleteAllData } from "../services/Time.ts"
 
 function SettingsPage({
   darkMode,
@@ -8,6 +9,11 @@ function SettingsPage({
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   const navigate = useNavigate()
+
+  function handleClearAll() {
+    deleteAllData()
+    navigate('/')
+  }
 
   return (
     <div className="fit-content p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4 text-black dark:text-white">
@@ -47,6 +53,13 @@ function SettingsPage({
           className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-3 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
         >
           Manage Blacklist
+        </button>
+        <button
+          type="button"
+          onClick={handleClearAll}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-3 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded"
+        >
+          Clear All Data
         </button>
       </div>
 

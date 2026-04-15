@@ -46,3 +46,15 @@ export async function getAllDailyData() {
     return {}
   }
 }
+
+// Delete all data
+export async function deleteAllData() {
+    try {
+        record.setValue({})
+        dailyData.setValue({})
+        return true
+    } catch (error) {
+        console.error("Error deleting all data: ", error)
+        return false
+    }
+}
