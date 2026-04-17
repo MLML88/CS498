@@ -175,7 +175,7 @@ function MainPage() {
     <>
       <div
         ref={imageRef}
-        className="relative p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md w-[700px] h-[550px] text-black dark:text-white"
+        className="relative p-4 bg-gray-100 dark:bg-gray-900 shadow-md w-[700px] h-[550px] text-black dark:text-white"
       >
         {/* Header */}
         <div className="pb-2 mb-4 border-b border-black dark:border-gray-700 flex justify-between items-center">

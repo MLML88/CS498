@@ -16,7 +16,7 @@ function SettingsPage({
   }
 
   return (
-    <div className="fit-content p-4 bg-gray-100 dark:bg-gray-900 rounded-lg shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4 text-black dark:text-white">
+    <div className="fit-content p-4 bg-gray-100 dark:bg-gray-900 shadow-md w-175 h-138 flex flex-col items-center justify-center gap-4 text-black dark:text-white">
       <h1 className="text-3xl font-bold underline text-black dark:text-white">
         Settings
       </h1>
