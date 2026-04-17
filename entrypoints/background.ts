@@ -51,6 +51,7 @@ async function saveTime(url: string, duration: number) {
   const allAlarms = await alarms.getValue();
   for (const [alarmId, alarm] of Object.entries(allAlarms)) {
     if (alarm.domain === key) {
+      console.log(`Updating alarm for ${key}: +${duration}ms`)
       allAlarms[alarmId].currentTime += duration;
     }
   }
@@ -169,7 +170,6 @@ export default defineBackground(() => {
    // Create alert if current time exceeds alarm duration
   setInterval(async () => {
     const allAlarms = await alarms.getValue();
-
     for (const [alarmId, alarm] of Object.entries(allAlarms)) {
       if (alarm.currentTime >= alarm.duration) {
         // Create alert or notification here
@@ -186,6 +186,20 @@ export default defineBackground(() => {
       }
     }
   }, 1000); // Check every second
+
+  // Increment alarm time every 5 seconds if active tab matches alarm domain and window is focused
+  setInterval(async () => {
+    if (windowFocused && activeUrl) {
+      const allAlarms = await alarms.getValue();
+      for (const [alarmId, alarm] of Object.entries(allAlarms)) {
+        if (alarm.domain === normalizeUrl(activeUrl)) {
+          allAlarms[alarmId].currentTime += 5000; // Increment current time by 5 seconds
+        }
+      }
+      await alarms.setValue(allAlarms);
+    }
+  }, 5000); // Check every 5 seconds
+
 
   init();
 });
